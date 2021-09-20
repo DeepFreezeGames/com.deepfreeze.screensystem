@@ -1,0 +1,19 @@
+{
+  "name": "com.deepfreeze.screenmanager",
+  "displayName": "Screen Manager",
+  "registry": "https://github.com/DeepFreezeGames/com.deepfreeze.screenmanager.git",
+  "version": "1.0.0",
+  "unity": "2018.1",
+  "description": "",
+  "keywords": [
+    "unity",
+    "ui",
+    "screens",
+    "menus"
+  ],
+  "dependencies": {
+    "com.deepfreeze.events" : "https://github.com/DeepFreezeGames/com.deepfreeze.events.git",
+    "com.deepfreeze.gameeditorwindow" : "https://github.com/DeepFreezeGames/com.deepfreeze.gameeditorwindow.git"
+  },
+  "category": "Unity"
+}
