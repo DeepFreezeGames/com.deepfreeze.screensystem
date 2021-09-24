@@ -1,4 +1,5 @@
 ﻿using System;
+using Events.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,13 +17,12 @@ namespace ScreenSystem.Runtime
         public bool hideable = true;
         public bool hidesOtherScreens = true;
         public CloseMethods closeMethod;
-        public bool blocksPopups;
+        public bool blockHighPriorityPopups;
+        public bool blockMediumPriorityPopups;
 
-        public UnityEvent onClose;
-        
         public virtual void Close()
         {
-            onClose?.Invoke();
+            EventManager.TriggerEvent(new ScreenClosedEvent(this));
             
             switch (closeMethod)
             {

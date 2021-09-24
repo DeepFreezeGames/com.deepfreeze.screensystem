@@ -1,12 +1,21 @@
-﻿namespace ScreenSystem.Runtime
+﻿using System;
+using UnityEngine;
+
+namespace ScreenSystem.Runtime
 {
+    [Serializable]
     public class ScreenSettings
     {
-        public string ConstantScreenPrefix;
-        public string ConstantPopupPrefix;
-        public string ScreenPrefixPort = "Screen_Port_";
-        public string ScreenPrefixLand = "Screen_Land_";
-        public string PopupPrefixPort = "Popup_Port_";
-        public string PopupPrefixLand = "Popup_Land_";
+        public string constantScreenPrefix;
+        public string constantPopupPrefix;
+        
+        [Space]
+        public string screenPrefixPort = "Screen_Port_";
+        public string screenPrefixLand = "Screen_Land_";
+        public string popupPrefixPort = "Popup_Port_";
+        public string popupPrefixLand = "Popup_Land_";
+
+        [Space]
+        public PopupCanvasController popupCanvasControllerPrefab;
     }
 }

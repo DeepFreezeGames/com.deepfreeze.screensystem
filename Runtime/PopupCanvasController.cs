@@ -1,4 +1,6 @@
-﻿using Events.Runtime;
+﻿using System;
+using System.Collections.Generic;
+using Events.Runtime;
 using UnityEngine;
 
 namespace ScreenSystem.Runtime
@@ -7,19 +9,32 @@ namespace ScreenSystem.Runtime
     [RequireComponent(typeof(CanvasGroup))]
     public class PopupCanvasController : MonoBehaviour
     {
-        public Canvas Canvas { get; private set; }
-        public CanvasGroup CanvasGroup { get; private set; }
-        public Transform Transform { get; private set; }
-        
+        public Canvas canvas;
+        public CanvasGroup canvasGroup;
+        public Transform popupContainer;
+
         public PopupPriority Priority { get; private set; }
+        public List<Popup> Popups { get; private set; } = new List<Popup>();
+        public Popup ActivePopup { get; private set; }
 
         private int _childCount = 0;
         
         private void Awake()
         {
-            Canvas = GetComponent<Canvas>();
-            CanvasGroup = GetComponent<CanvasGroup>();
-            Transform = transform;
+            if (canvas == null)
+            {
+                canvas = GetComponent<Canvas>();
+            }
+
+            if (canvasGroup == null)
+            {
+                canvasGroup = GetComponent<CanvasGroup>();
+            }
+
+            if (popupContainer == null)
+            {
+                popupContainer = transform;
+            }
         }
 
         private void Start()
@@ -34,37 +49,40 @@ namespace ScreenSystem.Runtime
 
         private void BindEvents()
         {
-            EventManager.SubscribeEventListener<ScreenOpenedEvent>(OnScreenOpened);
-            EventManager.SubscribeEventListener<ScreenClosedEvent>(OnScreenClosed);
+            //Popup Events
+            EventManager.SubscribeEventListener<PopupSpawnedEvent>(OnPopupOpened);
+            EventManager.SubscribeEventListener<PopupClosedEvent>(OnPopupClosed);
         }
 
-        private void OnScreenOpened(ScreenOpenedEvent screenOpenedEvent)
+        private void OnPopupOpened(PopupSpawnedEvent popupSpawnedEvent)
         {
-            if (screenOpenedEvent.Screen.blocksPopups)
+            if (popupSpawnedEvent.PopupCanvasController != this)
             {
-                for (int i = 0; i < Transform.childCount; i++)
-                {
-                    Transform.GetChild(i).gameObject.SetActive(false);
-                }
+                return;
             }
-        }
-
-        private void OnScreenClosed(ScreenClosedEvent screenClosedEvent)
-        {
             
-        }
-        
-        public void LateUpdate()
-        {
-            if (_childCount != Transform.childCount)
-            {
-                _childCount = Transform.childCount;
-                OnChildCountChanged();
-            }
+            Popups.Add(popupSpawnedEvent.Popup);
+            UpdatePopupSorting();
         }
 
-        private void OnChildCountChanged()
+        private void OnPopupClosed(PopupClosedEvent popupClosedEvent)
         {
+            if (popupClosedEvent.PopupCanvasController != this)
+            {
+                return;
+            }
+
+            Popups.Remove(popupClosedEvent.Popup);
+            UpdatePopupSorting();
+        }
+
+        private void UpdatePopupSorting()
+        {
+            if (Popups.Count == 0)
+            {
+                gameObject.SetActive(false);
+            }
+            
             
         }
     }

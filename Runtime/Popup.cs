@@ -5,13 +5,6 @@ using UnityEngine;
 
 namespace ScreenSystem.Runtime
 {
-    [Serializable]
-    public enum PopupPriority
-    {
-        Medium = 1,
-        High = 2
-    }
-    
     public abstract class Popup : MonoBehaviour
     {
         public bool animateIn = true;
