@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Events.Runtime;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace ScreenSystem.Runtime
 {
@@ -17,6 +16,8 @@ namespace ScreenSystem.Runtime
 
         private static readonly Dictionary<Type, GameScreen> OpenScreens = new();
         private static readonly Dictionary<PopupPriority, PopupCanvasController> PopupControllers = new();
+
+        private static IScreenProvider _screenProvider;
 
         #region SCREEN/POPUP IDs
         private static string ScreenPrefix => IsPortrait ? Settings.screenPrefixPort : Settings.screenPrefixLand;
@@ -37,9 +38,13 @@ namespace ScreenSystem.Runtime
         }
         #endregion
 
-        public static void Initialize(ScreenSettings settings)
+        public static async void Initialize(ScreenSettings settings, IScreenProvider screenProvider)
         {
             Settings = settings;
+            
+            Debug.Log($"Starting screen provider: {_screenProvider.GetType().Name}");
+            _screenProvider = screenProvider;
+            await UniTask.WaitUntil(() => _screenProvider.Initialized);
 
             SpawnPopupContainers();
             BindEvents();
@@ -76,14 +81,13 @@ namespace ScreenSystem.Runtime
         #region SCREENS
         public static async Task<T> ShowScreen<T>() where T : GameScreen
         {
-            
             Debug.Log($"Showing screen: ({GetScreenId(typeof(T))})");
             if (IsScreenOpen<T>(out var screen))
             {
                 return screen;
             }
 
-            var template = await Addressables.LoadAssetAsync<T>(GetScreenId(typeof(T)));
+            var template = await _screenProvider.GetScreen<T>(GetScreenId(typeof(T)));
             screen = GameObject.Instantiate(template);
             OpenScreens.Add(typeof(T), screen);
 
@@ -119,7 +123,7 @@ namespace ScreenSystem.Runtime
         #region POPUPS
         public static async Task<T> ShowPopup<T>() where T : Popup
         {
-            var template = await Addressables.LoadAssetAsync<T>(GetPopupId(typeof(T)));
+            var template = await _screenProvider.GetPopup<T>(GetPopupId(typeof(T)));
             var spawnedPopup = GameObject.Instantiate(template, PopupControllers[template.priority].popupContainer);
             EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup, PopupControllers[template.priority]));
             return spawnedPopup;

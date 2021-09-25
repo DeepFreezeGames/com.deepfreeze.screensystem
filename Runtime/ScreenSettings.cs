@@ -4,7 +4,7 @@ using UnityEngine;
 namespace ScreenSystem.Runtime
 {
     [Serializable]
-    public class ScreenSettings
+    public partial class ScreenSettings
     {
         public string constantScreenPrefix;
         public string constantPopupPrefix;
