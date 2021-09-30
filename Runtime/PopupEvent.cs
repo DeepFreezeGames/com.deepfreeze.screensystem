@@ -8,14 +8,14 @@ namespace ScreenSystem.Runtime
     /// </summary>
     public abstract class PopupEvent : IEvent
     {
-        public Type[] DispatchAs { get; protected set; }
+        public Type DispatchAs { get; protected set; }
         public Popup Popup { get; protected set; }
-        public PopupCanvasController PopupCanvasController { get; protected set; }
         public Type PopupType { get; }
+        public PopupCanvasController PopupCanvasController { get; protected set; }
 
-        protected PopupEvent(Popup popup)
+        protected PopupEvent(Popup popup, PopupCanvasController popupCanvasController)
         {
-            DispatchAs = new[] { typeof(PopupEvent) };
+            DispatchAs = typeof(PopupEvent);
             Popup = popup;
             PopupType = popup.GetType();
         }
@@ -26,11 +26,9 @@ namespace ScreenSystem.Runtime
     /// </summary>
     public class PopupSpawnedEvent : PopupEvent
     {
-        public PopupCanvasController PopupCanvasController { get; protected set; }
-        
-        public PopupSpawnedEvent(Popup popup, PopupCanvasController popupCanvasController) : base(popup)
+        public PopupSpawnedEvent(Popup popup, PopupCanvasController popupCanvasController) : base(popup, popupCanvasController)
         {
-            DispatchAs = new[] { typeof(PopupSpawnedEvent) };
+            DispatchAs = typeof(PopupSpawnedEvent);
         }
     }
     
@@ -39,12 +37,12 @@ namespace ScreenSystem.Runtime
     /// </summary>
     public class PopupOpenedEvent : IEvent
     {
-        public Type[] DispatchAs { get; protected set; }
+        public Type DispatchAs { get; protected set; }
         public Popup Popup { get; protected set; }
 
         public PopupOpenedEvent(Popup popup)
         {
-            DispatchAs = new[] { typeof(PopupOpenedEvent) };
+            DispatchAs = typeof(PopupOpenedEvent);
         }
     }
 
@@ -53,9 +51,9 @@ namespace ScreenSystem.Runtime
     /// </summary>
     public class PopupClosedEvent : PopupEvent
     {
-        public PopupClosedEvent(Popup popup) : base(popup)
+        public PopupClosedEvent(Popup popup, PopupCanvasController popupCanvasController) : base(popup, popupCanvasController)
         {
-            DispatchAs = new[] { typeof(PopupClosedEvent) };
+            DispatchAs = typeof(PopupClosedEvent);
         }
     }
 }

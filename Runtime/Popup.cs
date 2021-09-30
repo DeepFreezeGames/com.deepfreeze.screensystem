@@ -11,6 +11,7 @@ namespace ScreenSystem.Runtime
         public bool animateOut = true;
         public float animateTime = 0.35f;
         public PopupPriority priority = PopupPriority.Medium;
+        public PopupCanvasController PopupCanvasController { get; set; }
         
         public virtual void OnEnable()
         {
@@ -59,7 +60,7 @@ namespace ScreenSystem.Runtime
 
         private void InternalClose()
         {
-            EventManager.TriggerEvent(new PopupClosedEvent(this));
+            EventManager.TriggerEvent(new PopupClosedEvent(this, PopupCanvasController));
             Destroy(gameObject);
         }
     }

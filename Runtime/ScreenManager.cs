@@ -125,6 +125,7 @@ namespace ScreenSystem.Runtime
         {
             var template = await _screenProvider.GetPopup<T>(GetPopupId(typeof(T)));
             var spawnedPopup = GameObject.Instantiate(template, PopupControllers[template.priority].popupContainer);
+            spawnedPopup.PopupCanvasController = PopupControllers[template.priority];
             EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup, PopupControllers[template.priority]));
             return spawnedPopup;
         }

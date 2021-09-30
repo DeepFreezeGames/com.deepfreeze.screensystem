@@ -5,12 +5,13 @@ namespace ScreenSystem.Runtime
 {
     public abstract class ScreenEvent : IEvent
     {
-        public Type[] DispatchAs { get; protected set; }
+        public Type DispatchAs { get; protected set; }
         public GameScreen Screen { get; }
         public Type ScreenType { get; }
 
         protected ScreenEvent(GameScreen screen)
         {
+            DispatchAs = typeof(ScreenEvent);
             Screen = screen;
             ScreenType = screen.GetType();
         }
@@ -20,7 +21,7 @@ namespace ScreenSystem.Runtime
     {
         public ScreenOpenedEvent(GameScreen screen) : base(screen)
         {
-            DispatchAs = new[] { typeof(ScreenOpenedEvent) };
+            DispatchAs = typeof(ScreenOpenedEvent);
         }
     }
 
@@ -28,7 +29,7 @@ namespace ScreenSystem.Runtime
     {
         public ScreenClosedEvent(GameScreen screen) : base(screen)
         {
-            DispatchAs = new[] { typeof(ScreenClosedEvent) };
+            DispatchAs = typeof(ScreenClosedEvent);
         }
     }
 }
