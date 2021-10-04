@@ -123,12 +123,13 @@ namespace ScreenSystem.Runtime
         public static async Task<T> ShowPopup<T>() where T : Popup
         {
             var spawnedPopup = await _screenProvider.GetPopup<T>(GetPopupId(typeof(T)));
-            spawnedPopup.transform.SetParent(PopupControllers[spawnedPopup.priority].popupContainer);
-            spawnedPopup.transform.localPosition = Vector3.zero;
-            spawnedPopup.transform.localRotation = Quaternion.identity;
-            spawnedPopup.transform.localScale = Vector3.one;
-            spawnedPopup.PopupCanvasController = PopupControllers[template.priority];
-            EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup, PopupControllers[template.priority]));
+            var spawnedPopupTransform = spawnedPopup.transform;
+            spawnedPopupTransform.SetParent(PopupControllers[spawnedPopup.priority].popupContainer);
+            spawnedPopupTransform.localPosition = Vector3.zero;
+            spawnedPopupTransform.localRotation = Quaternion.identity;
+            spawnedPopupTransform.localScale = Vector3.one;
+            spawnedPopup.PopupCanvasController = PopupControllers[spawnedPopup.priority];
+            EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup, spawnedPopup.PopupCanvasController));
             return spawnedPopup;
         }
 
