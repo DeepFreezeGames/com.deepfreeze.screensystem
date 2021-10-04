@@ -87,8 +87,7 @@ namespace ScreenSystem.Runtime
                 return screen;
             }
 
-            var template = await _screenProvider.GetScreen<T>(GetScreenId(typeof(T)));
-            screen = GameObject.Instantiate(template);
+            screen = await _screenProvider.GetScreen<T>(GetScreenId(typeof(T)));
             OpenScreens.Add(typeof(T), screen);
 
             EventManager.TriggerEvent(new ScreenOpenedEvent(screen));
@@ -123,8 +122,11 @@ namespace ScreenSystem.Runtime
         #region POPUPS
         public static async Task<T> ShowPopup<T>() where T : Popup
         {
-            var template = await _screenProvider.GetPopup<T>(GetPopupId(typeof(T)));
-            var spawnedPopup = GameObject.Instantiate(template, PopupControllers[template.priority].popupContainer);
+            var spawnedPopup = await _screenProvider.GetPopup<T>(GetPopupId(typeof(T)));
+            spawnedPopup.transform.SetParent(PopupControllers[spawnedPopup.priority].popupContainer);
+            spawnedPopup.transform.localPosition = Vector3.zero;
+            spawnedPopup.transform.localRotation = Quaternion.identity;
+            spawnedPopup.transform.localScale = Vector3.one;
             spawnedPopup.PopupCanvasController = PopupControllers[template.priority];
             EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup, PopupControllers[template.priority]));
             return spawnedPopup;
