@@ -42,6 +42,8 @@ namespace ScreenSystem.Runtime
         {
             Settings = settings;
             
+            IsPortrait = Screen.height > Screen.width;
+            
             Debug.Log($"Starting screen provider: {screenProvider.GetType().Name}");
             _screenProvider = screenProvider;
             await UniTask.WaitUntil(() => _screenProvider.Initialized);
