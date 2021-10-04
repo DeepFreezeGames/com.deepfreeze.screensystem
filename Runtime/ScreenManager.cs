@@ -42,7 +42,7 @@ namespace ScreenSystem.Runtime
         {
             Settings = settings;
             
-            Debug.Log($"Starting screen provider: {_screenProvider.GetType().Name}");
+            Debug.Log($"Starting screen provider: {screenProvider.GetType().Name}");
             _screenProvider = screenProvider;
             await UniTask.WaitUntil(() => _screenProvider.Initialized);
 
