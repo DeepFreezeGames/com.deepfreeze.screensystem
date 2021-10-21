@@ -18,6 +18,22 @@ namespace ScreenSystem.Runtime
         public Popup ActivePopup { get; private set; }
 
         private int _childCount = 0;
+
+        private bool IsBlocked
+        {
+            get
+            {
+                switch (Priority)
+                {
+                    case PopupPriority.Medium:
+                        return ScreenManager.BlockMediumPriorityPopups;
+                    case PopupPriority.High:
+                        return ScreenManager.BlockHighPriorityPopups;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
         
         private void Awake()
         {
@@ -40,6 +56,7 @@ namespace ScreenSystem.Runtime
         private void Start()
         {
             BindEvents();
+            UpdatePopupSorting();
         }
 
         public void Initialize(PopupPriority priority)
@@ -78,12 +95,18 @@ namespace ScreenSystem.Runtime
 
         private void UpdatePopupSorting()
         {
+            gameObject.SetActive(Popups.Count > 0 || IsBlocked);
+            ActivePopup = Popups.Count > 0 ? Popups[0] : null;
+            
             if (Popups.Count == 0)
             {
-                gameObject.SetActive(false);
+                return;
             }
             
-            
+            for (var i = 0; i < Popups.Count; i++)
+            {
+                Popups[i].gameObject.SetActive(i == 0);
+            }
         }
     }
 }

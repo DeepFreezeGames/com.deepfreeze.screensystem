@@ -16,6 +16,9 @@ namespace ScreenSystem.Runtime
 
         private static readonly Dictionary<Type, GameScreen> OpenScreens = new();
         private static readonly Dictionary<PopupPriority, PopupCanvasController> PopupControllers = new();
+        
+        public static bool BlockHighPriorityPopups { get; private set; }
+        public static bool BlockMediumPriorityPopups { get; private set; }
 
         private static IScreenProvider _screenProvider;
 
@@ -175,9 +178,9 @@ namespace ScreenSystem.Runtime
                     blockMediumPriorityPopups = true;
                 }
             }
-            
-            PopupControllers[PopupPriority.High].gameObject.SetActive(!blockHighPriorityPopups);
-            PopupControllers[PopupPriority.Medium].gameObject.SetActive(!blockMediumPriorityPopups);
+
+            BlockHighPriorityPopups = blockHighPriorityPopups;
+            BlockMediumPriorityPopups = blockMediumPriorityPopups;
         }
     }
 }

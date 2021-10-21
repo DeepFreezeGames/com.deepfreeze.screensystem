@@ -17,6 +17,7 @@ namespace ScreenSystem.Runtime
         {
             DispatchAs = typeof(PopupEvent);
             Popup = popup;
+            PopupCanvasController = popupCanvasController;
             PopupType = popup.GetType();
         }
     }
