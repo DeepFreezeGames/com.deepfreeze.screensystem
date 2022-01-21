@@ -8,16 +8,12 @@ namespace ScreenSystem.Runtime
     /// </summary>
     public abstract class PopupEvent : IEvent
     {
-        public Type DispatchAs { get; protected set; }
         public Popup Popup { get; protected set; }
         public Type PopupType { get; }
-        public PopupCanvasController PopupCanvasController { get; protected set; }
 
-        protected PopupEvent(Popup popup, PopupCanvasController popupCanvasController)
+        protected PopupEvent(Popup popup)
         {
-            DispatchAs = typeof(PopupEvent);
             Popup = popup;
-            PopupCanvasController = popupCanvasController;
             PopupType = popup.GetType();
         }
     }
@@ -27,23 +23,18 @@ namespace ScreenSystem.Runtime
     /// </summary>
     public class PopupSpawnedEvent : PopupEvent
     {
-        public PopupSpawnedEvent(Popup popup, PopupCanvasController popupCanvasController) : base(popup, popupCanvasController)
+        public PopupSpawnedEvent(Popup popup) : base(popup)
         {
-            DispatchAs = typeof(PopupSpawnedEvent);
         }
     }
     
     /// <summary>
     /// Called by the <see cref="Popup"/> when the popup is activated
     /// </summary>
-    public class PopupOpenedEvent : IEvent
+    public class PopupOpenedEvent : PopupEvent
     {
-        public Type DispatchAs { get; protected set; }
-        public Popup Popup { get; protected set; }
-
-        public PopupOpenedEvent(Popup popup)
+        public PopupOpenedEvent(Popup popup) :base(popup)
         {
-            DispatchAs = typeof(PopupOpenedEvent);
         }
     }
 
@@ -52,9 +43,8 @@ namespace ScreenSystem.Runtime
     /// </summary>
     public class PopupClosedEvent : PopupEvent
     {
-        public PopupClosedEvent(Popup popup, PopupCanvasController popupCanvasController) : base(popup, popupCanvasController)
+        public PopupClosedEvent(Popup popup) : base(popup)
         {
-            DispatchAs = typeof(PopupClosedEvent);
         }
     }
 }

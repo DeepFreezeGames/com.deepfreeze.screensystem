@@ -62,7 +62,7 @@ namespace ScreenSystem.Runtime
         {
             var popup = this;
             Destroy(gameObject);
-            EventManager.TriggerEvent(new PopupClosedEvent(popup, PopupCanvasController));
+            EventManager.TriggerEvent(new PopupClosedEvent(popup));
         }
     }
 }

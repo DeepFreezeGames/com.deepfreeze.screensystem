@@ -137,7 +137,7 @@ namespace ScreenSystem.Runtime
             spawnedPopupTransform.localRotation = Quaternion.identity;
             spawnedPopupTransform.localScale = Vector3.one;
             spawnedPopup.PopupCanvasController = PopupControllers[spawnedPopup.priority];
-            EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup, spawnedPopup.PopupCanvasController));
+            EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup));
             UpdateScreenSorting();
             return spawnedPopup;
         }
