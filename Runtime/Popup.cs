@@ -60,8 +60,9 @@ namespace ScreenSystem.Runtime
 
         private void InternalClose()
         {
-            EventManager.TriggerEvent(new PopupClosedEvent(this, PopupCanvasController));
+            var popup = this;
             Destroy(gameObject);
+            EventManager.TriggerEvent(new PopupClosedEvent(popup, PopupCanvasController));
         }
     }
 }

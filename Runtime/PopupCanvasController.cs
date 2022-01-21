@@ -19,22 +19,6 @@ namespace ScreenSystem.Runtime
 
         private int _childCount = 0;
 
-        private bool IsBlocked
-        {
-            get
-            {
-                switch (Priority)
-                {
-                    case PopupPriority.Medium:
-                        return ScreenManager.BlockMediumPriorityPopups;
-                    case PopupPriority.High:
-                        return ScreenManager.BlockHighPriorityPopups;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-        
         private void Awake()
         {
             if (canvas == null)
@@ -51,12 +35,8 @@ namespace ScreenSystem.Runtime
             {
                 popupContainer = transform;
             }
-        }
-
-        private void Start()
-        {
-            BindEvents();
-            UpdatePopupSorting();
+            
+            UpdatePopupSorting(false);
         }
 
         public void Initialize(PopupPriority priority)
@@ -64,42 +44,27 @@ namespace ScreenSystem.Runtime
             Priority = priority;
         }
 
-        private void BindEvents()
+        public void UpdatePopupSorting(bool active)
         {
-            //Popup Events
-            EventManager.SubscribeEventListener<PopupSpawnedEvent>(OnPopupOpened);
-            EventManager.SubscribeEventListener<PopupClosedEvent>(OnPopupClosed);
-        }
-
-        private void OnPopupOpened(PopupSpawnedEvent popupSpawnedEvent)
-        {
-            if (popupSpawnedEvent.PopupCanvasController != this)
+            Popups.Clear();
+            for (var i = 0; i < popupContainer.childCount; i++)
             {
-                return;
+                var popup = popupContainer.GetChild(i).GetComponent<Popup>();
+                if (popup != null)
+                {
+                    Popups.Add(popup);
+                }
             }
             
-            Popups.Add(popupSpawnedEvent.Popup);
-            UpdatePopupSorting();
-        }
+            gameObject.SetActive(Popups.Count > 0 && active);
 
-        private void OnPopupClosed(PopupClosedEvent popupClosedEvent)
-        {
-            if (popupClosedEvent.PopupCanvasController != this)
-            {
-                return;
-            }
-
-            Popups.Remove(popupClosedEvent.Popup);
-            UpdatePopupSorting();
-        }
-
-        private void UpdatePopupSorting()
-        {
-            gameObject.SetActive(Popups.Count > 0 || IsBlocked);
+            Debug.Log($"{Priority.ToString("G")} popup count: {Popups.Count}");
+            
             ActivePopup = Popups.Count > 0 ? Popups[0] : null;
             
             if (Popups.Count == 0)
             {
+                gameObject.SetActive(false);
                 return;
             }
             

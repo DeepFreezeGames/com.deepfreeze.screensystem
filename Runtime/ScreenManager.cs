@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Events.Runtime;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace ScreenSystem.Runtime
 {
@@ -64,9 +65,10 @@ namespace ScreenSystem.Runtime
             foreach (var priority in Enum.GetValues(typeof(PopupPriority)))
             {
                 var priorityValue = (PopupPriority)priority;
-                var newController = GameObject.Instantiate(Settings.popupCanvasControllerPrefab);
+                var newController = Object.Instantiate(Settings.popupCanvasControllerPrefab);
                 newController.Initialize(priorityValue);
                 PopupControllers.Add(priorityValue, newController);
+                Object.DontDestroyOnLoad(newController.gameObject);
                 newController.gameObject.SetActive(false);
             }
         }
@@ -93,6 +95,7 @@ namespace ScreenSystem.Runtime
             }
 
             screen = await _screenProvider.GetScreen<T>(GetScreenId(typeof(T)));
+            Object.DontDestroyOnLoad(screen.gameObject);
             OpenScreens.Add(typeof(T), screen);
 
             EventManager.TriggerEvent(new ScreenOpenedEvent(screen));
@@ -135,6 +138,7 @@ namespace ScreenSystem.Runtime
             spawnedPopupTransform.localScale = Vector3.one;
             spawnedPopup.PopupCanvasController = PopupControllers[spawnedPopup.priority];
             EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup, spawnedPopup.PopupCanvasController));
+            UpdateScreenSorting();
             return spawnedPopup;
         }
 
@@ -162,25 +166,29 @@ namespace ScreenSystem.Runtime
         }
         #endregion
 
-        private static void UpdateScreenSorting()
+        private static async void UpdateScreenSorting()
         {
-            var blockHighPriorityPopups = false;
-            var blockMediumPriorityPopups = false;
+            await Task.Yield();
+            
+            BlockHighPriorityPopups = false;
+            BlockMediumPriorityPopups = false;
             foreach (var (_, gameScreen) in OpenScreens)
             {
                 if (gameScreen.blockHighPriorityPopups)
                 {
-                    blockHighPriorityPopups = true;
+                    BlockHighPriorityPopups = true;
                 }
 
                 if (gameScreen.blockMediumPriorityPopups)
                 {
-                    blockMediumPriorityPopups = true;
+                    BlockMediumPriorityPopups = true;
                 }
             }
 
-            BlockHighPriorityPopups = blockHighPriorityPopups;
-            BlockMediumPriorityPopups = blockMediumPriorityPopups;
+            Debug.Log($"{(BlockHighPriorityPopups ? "Hide" : "Show")} high priority");
+            PopupControllers[PopupPriority.High].UpdatePopupSorting(!BlockHighPriorityPopups);
+            Debug.Log($"{(!BlockMediumPriorityPopups && !PopupControllers[PopupPriority.High].gameObject.activeInHierarchy ? "Show" : "Hide")} medium priority");
+            PopupControllers[PopupPriority.Medium].UpdatePopupSorting(!BlockMediumPriorityPopups && !PopupControllers[PopupPriority.High].gameObject.activeInHierarchy);
         }
     }
 }
