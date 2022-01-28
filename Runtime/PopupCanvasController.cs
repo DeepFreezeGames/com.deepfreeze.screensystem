@@ -42,9 +42,19 @@ namespace ScreenSystem.Runtime
             Priority = priority;
         }
 
+        public void AddPopup(Popup popup)
+        {
+            Popups.Add(popup);
+        }
+
+        public void RemovePopup(Popup popup)
+        {
+            Popups.Remove(popup);
+        }
+
         public void UpdatePopupSorting(bool active)
         {
-            Popups.Clear();
+            /*Popups.Clear();
             for (var i = 0; i < popupContainer.childCount; i++)
             {
                 var popup = popupContainer.GetChild(i).GetComponent<Popup>();
@@ -52,7 +62,7 @@ namespace ScreenSystem.Runtime
                 {
                     Popups.Add(popup);
                 }
-            }
+            }*/
             
             gameObject.SetActive(Popups.Count > 0 && active);
 

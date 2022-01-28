@@ -27,6 +27,10 @@ namespace ScreenSystem.Runtime
 
         private void InternalOpened()
         {
+            if (ScreenManager.Settings.logPopupShown)
+            {
+                Debug.Log($"Popup shown - {GetType().Name}\nPopup Id: {GetInstanceID().ToString()}");
+            }
             EventManager.TriggerEvent(new PopupOpenedEvent(this));
         }
 
@@ -61,7 +65,17 @@ namespace ScreenSystem.Runtime
         private void InternalClose()
         {
             var popup = this;
+            if (PopupCanvasController != null)
+            {
+                PopupCanvasController.RemovePopup(this);
+            }
+            
             Destroy(gameObject);
+            if (ScreenManager.Settings.logPopupClosed)
+            {
+                Debug.Log($"Popup closed - {GetType().Name}\nPopup Id: {GetInstanceID().ToString()}");
+            }
+            
             EventManager.TriggerEvent(new PopupClosedEvent(popup));
         }
     }

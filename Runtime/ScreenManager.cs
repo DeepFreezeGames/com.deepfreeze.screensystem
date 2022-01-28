@@ -24,6 +24,7 @@ namespace ScreenSystem.Runtime
         public static bool BlockMediumPriorityPopups { get; private set; }
 
         private static IScreenProvider _screenProvider;
+        private static Task _nextSortingUpdate;
 
         #region SCREEN/POPUP IDs
         private static string ScreenPrefix => IsPortrait ? Settings.screenPrefixPort : Settings.screenPrefixLand;
@@ -140,6 +141,7 @@ namespace ScreenSystem.Runtime
             spawnedPopupTransform.localScale = Vector3.one;
             var canvasController = PopupControllers[spawnedPopup.priority];
             spawnedPopup.PopupCanvasController = canvasController;
+            canvasController.AddPopup(spawnedPopup);
             EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup));
             UpdateScreenSorting();
             return spawnedPopup;
@@ -169,9 +171,27 @@ namespace ScreenSystem.Runtime
         }
         #endregion
 
-        private static async void UpdateScreenSorting()
+        /// <summary>
+        /// A wrapper method to prevent multiple sorting updates from firing
+        /// </summary>
+        private static void UpdateScreenSorting()
+        {
+            if (_nextSortingUpdate != null)
+            {
+                return;
+            }
+
+            _nextSortingUpdate = InternalUpdateSorting();
+        }
+
+        private static async Task InternalUpdateSorting()
         {
             await Task.Yield();
+
+            if (Settings.logSortingUpdates)
+            {
+                Debug.Log("Updating screen sorting");
+            }
             
             BlockHighPriorityPopups = false;
             BlockMediumPriorityPopups = false;
@@ -192,6 +212,13 @@ namespace ScreenSystem.Runtime
             PopupControllers[PopupPriority.High].UpdatePopupSorting(!BlockHighPriorityPopups);
             Debug.Log($"{(!BlockMediumPriorityPopups && !PopupControllers[PopupPriority.High].gameObject.activeInHierarchy ? "Show" : "Hide")} medium priority");
             PopupControllers[PopupPriority.Medium].UpdatePopupSorting(!BlockMediumPriorityPopups && !PopupControllers[PopupPriority.High].gameObject.activeInHierarchy);
+
+            if (Settings.logSortingUpdates)
+            {
+                Debug.Log("Sorting updated");
+            }
+            
+            _nextSortingUpdate = null;
         }
     }
 }

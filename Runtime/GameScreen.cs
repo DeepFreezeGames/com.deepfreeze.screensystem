@@ -20,10 +20,16 @@ namespace ScreenSystem.Runtime
         public bool blockHighPriorityPopups;
         public bool blockMediumPriorityPopups;
 
+        public void OnEnable()
+        {
+            if (ScreenManager.Settings.logPopupShown)
+            {
+                Debug.Log($"Screen shown - {GetType().Name}");
+            }
+        }
+
         public virtual void Close()
         {
-            EventManager.TriggerEvent(new ScreenClosedEvent(this));
-            
             switch (closeMethod)
             {
                 case CloseMethods.Hide:
@@ -35,6 +41,13 @@ namespace ScreenSystem.Runtime
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            if (ScreenManager.Settings.logScreenClosed)
+            {
+                Debug.Log($"Screen closed - {GetType().Name}");
+            }
+
+            EventManager.TriggerEvent(new ScreenClosedEvent(this));
         }
     }
 }

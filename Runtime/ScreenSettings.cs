@@ -17,5 +17,14 @@ namespace ScreenSystem.Runtime
 
         [Space]
         public PopupCanvasController popupCanvasControllerPrefab;
+
+        [Space] 
+        public bool logScreenSpawned;
+        public bool logScreenShown;
+        public bool logScreenClosed;
+        public bool logPopupSpawned;
+        public bool logPopupShown;
+        public bool logPopupClosed;
+        public bool logSortingUpdates;
     }
 }
