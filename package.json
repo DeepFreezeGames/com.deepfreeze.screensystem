@@ -14,7 +14,6 @@
   ],
   "dependencies": {
     "com.deepfreeze.events" : "https://github.com/DeepFreezeGames/com.deepfreeze.events.git",
-    "com.deepfreeze.gameeditorwindow" : "https://github.com/DeepFreezeGames/com.deepfreeze.gameeditorwindow.git",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask"
   },
   "category": "Unity"
