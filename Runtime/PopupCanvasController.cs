@@ -17,8 +17,6 @@ namespace ScreenSystem.Runtime
         public List<Popup> Popups { get; private set; } = new List<Popup>();
         public Popup ActivePopup { get; private set; }
 
-        private int _childCount = 0;
-
         private void Awake()
         {
             if (canvas == null)
@@ -58,7 +56,7 @@ namespace ScreenSystem.Runtime
             
             gameObject.SetActive(Popups.Count > 0 && active);
 
-            Debug.Log($"{Priority.ToString("G")} popup count: {Popups.Count}");
+            Debug.Log($"{Priority.ToString("G")} popup count: {Popups.Count.ToString()}");
             
             ActivePopup = Popups.Count > 0 ? Popups[0] : null;
             

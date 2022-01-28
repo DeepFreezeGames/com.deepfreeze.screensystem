@@ -1,3 +1,5 @@
+#define DEEPFREEZE_SCREENSYSTEM
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -136,7 +138,8 @@ namespace ScreenSystem.Runtime
             spawnedPopupTransform.localPosition = Vector3.zero;
             spawnedPopupTransform.localRotation = Quaternion.identity;
             spawnedPopupTransform.localScale = Vector3.one;
-            spawnedPopup.PopupCanvasController = PopupControllers[spawnedPopup.priority];
+            var canvasController = PopupControllers[spawnedPopup.priority];
+            spawnedPopup.PopupCanvasController = canvasController;
             EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup));
             UpdateScreenSorting();
             return spawnedPopup;
