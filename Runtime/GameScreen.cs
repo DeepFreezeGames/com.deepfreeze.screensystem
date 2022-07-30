@@ -1,9 +1,9 @@
 ﻿using System;
-using Events.Runtime;
+using DeepFreeze.Packages.Events.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace ScreenSystem.Runtime
+namespace DeepFreeze.Packages.ScreenSystem.Runtime
 {
     public abstract class GameScreen : MonoBehaviour
     {

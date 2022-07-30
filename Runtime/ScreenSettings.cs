@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ScreenSystem.Runtime
+namespace DeepFreeze.Packages.ScreenSystem.Runtime
 {
     [Serializable]
     public partial class ScreenSettings

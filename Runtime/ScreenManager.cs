@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using Events.Runtime;
+using DeepFreeze.Packages.Events.Runtime;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace ScreenSystem.Runtime
+namespace DeepFreeze.Packages.ScreenSystem.Runtime
 {
     public static class ScreenManager
     {

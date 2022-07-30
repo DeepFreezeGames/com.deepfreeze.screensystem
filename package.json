@@ -3,8 +3,8 @@
   "displayName": "Screen Manager",
   "author": {"name": "Deep Freeze Games", "url": "https://github.com/DeepFreezeGames"},
   "registry": "https://github.com/DeepFreezeGames/com.deepfreeze.screenmanager.git",
-  "version": "1.0.8",
-  "unity": "2018.1",
+  "version": "1.0.9",
+  "unity": "2019.0",
   "description": "",
   "keywords": [
     "unity",

@@ -1,6 +1,6 @@
 using System;
 
-namespace ScreenSystem.Runtime
+namespace DeepFreeze.Packages.ScreenSystem.Runtime
 {
     [Serializable]
     public enum PopupPriority

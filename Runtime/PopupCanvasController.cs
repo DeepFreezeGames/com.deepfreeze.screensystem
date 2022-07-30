@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Events.Runtime;
+using DeepFreeze.Packages.Events.Runtime;
 using UnityEngine;
 
-namespace ScreenSystem.Runtime
+namespace DeepFreeze.Packages.ScreenSystem.Runtime
 {
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(CanvasGroup))]

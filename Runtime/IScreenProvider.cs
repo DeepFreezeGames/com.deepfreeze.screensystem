@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ScreenSystem.Runtime
+namespace DeepFreeze.Packages.ScreenSystem.Runtime
 {
     public interface IScreenProvider
     {
