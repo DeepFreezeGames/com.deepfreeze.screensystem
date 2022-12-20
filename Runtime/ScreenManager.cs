@@ -47,6 +47,12 @@ namespace DeepFreeze.Packages.ScreenSystem.Runtime
 
         public static async void Initialize(ScreenSettings settings, IScreenProvider screenProvider)
         {
+            if (Initialized)
+            {
+                Debug.LogError($"Trying to initialize {nameof(ScreenManager)} but it is already initialized");
+                return;
+            }
+            
             Settings = settings;
             
             IsPortrait = Screen.height > Screen.width;
