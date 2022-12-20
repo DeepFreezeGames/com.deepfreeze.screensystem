@@ -3,7 +3,7 @@
   "displayName": "Screen System",
   "author": {"name": "Deep Freeze Games", "url": "https://github.com/DeepFreezeGames"},
   "registry": "https://github.com/DeepFreezeGames/com.deepfreeze.screensystem.git",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "unity": "2019.1",
   "description": "",
   "keywords": [
