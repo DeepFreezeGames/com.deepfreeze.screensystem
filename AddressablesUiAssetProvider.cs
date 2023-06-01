@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine.AddressableAssets;
 
-namespace DeepFreeze.Packages.ScreenSystem.Runtime
+namespace DeepFreeze.ScreenSystem
 {
     public class AddressablesUiAssetProvider : IScreenProvider
     {

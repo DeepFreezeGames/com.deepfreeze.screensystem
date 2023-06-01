@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace DeepFreeze.Packages.ScreenSystem.Runtime
+namespace DeepFreeze.ScreenSystem
 {
     [Serializable]
     public partial class ScreenSettings
@@ -12,8 +12,10 @@ namespace DeepFreeze.Packages.ScreenSystem.Runtime
         [Space]
         public string screenPrefixPort = "Screen_Port_";
         public string screenPrefixLand = "Screen_Land_";
+        public string screenSuffix = "";
         public string popupPrefixPort = "Popup_Port_";
         public string popupPrefixLand = "Popup_Land_";
+        public string popupSuffix = "";
 
         [Space]
         public PopupCanvasController popupCanvasControllerPrefab;

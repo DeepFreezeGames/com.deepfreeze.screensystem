@@ -1,7 +1,7 @@
 ﻿using System;
-using DeepFreeze.Packages.Events.Runtime;
+using DeepFreeze.Events;
 
-namespace DeepFreeze.Packages.ScreenSystem.Runtime
+namespace DeepFreeze.ScreenSystem
 {
     public abstract class ScreenEvent : IEvent
     {

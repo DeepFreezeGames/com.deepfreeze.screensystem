@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using DeepFreeze.Packages.Events.Runtime;
+using DeepFreeze.Events;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace DeepFreeze.Packages.ScreenSystem.Runtime
+namespace DeepFreeze.ScreenSystem
 {
     public static class ScreenManager
     {
@@ -33,15 +33,15 @@ namespace DeepFreeze.Packages.ScreenSystem.Runtime
         private static string GetScreenId(Type type)
         {
             return string.IsNullOrEmpty(Settings.constantScreenPrefix)
-                ? $"{ScreenPrefix}{type.Name}"
-                : $"{Settings.constantScreenPrefix}{ScreenPrefix}{type.Name}";
+                ? $"{ScreenPrefix}{type.Name}{Settings.screenSuffix}"
+                : $"{Settings.constantScreenPrefix}{ScreenPrefix}{type.Name}{Settings.screenSuffix}";
         }
 
         private static string GetPopupId(Type type)
         {
             return string.IsNullOrEmpty(Settings.constantPopupPrefix)
-                ? $"{PopupPrefix}{type.Name}"
-                : $"{Settings.constantPopupPrefix}{PopupPrefix}{type.Name}";
+                ? $"{PopupPrefix}{type.Name}{Settings.popupSuffix}"
+                : $"{Settings.constantPopupPrefix}{PopupPrefix}{type.Name}{Settings.popupSuffix}";
         }
         #endregion
 

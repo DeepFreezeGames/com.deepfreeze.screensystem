@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
-using DeepFreeze.Packages.Events.Runtime;
+using DeepFreeze.Events;
 using UnityEngine;
 
-namespace DeepFreeze.Packages.ScreenSystem.Runtime
+namespace DeepFreeze.ScreenSystem
 {
     public abstract class Popup : MonoBehaviour
     {

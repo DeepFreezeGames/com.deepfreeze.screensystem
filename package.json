@@ -1,9 +1,12 @@
 {
   "name": "com.deepfreeze.screensystem",
   "displayName": "Screen System",
-  "author": {"name": "Deep Freeze Games", "url": "https://github.com/DeepFreezeGames"},
+  "author": {
+    "name": "Deep Freeze Games", 
+    "url": "https://github.com/DeepFreezeGames"
+  },
   "registry": "https://github.com/DeepFreezeGames/com.deepfreeze.screensystem.git",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "unity": "2019.1",
   "description": "",
   "keywords": [

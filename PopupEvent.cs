@@ -1,7 +1,7 @@
 ﻿using System;
-using DeepFreeze.Packages.Events.Runtime;
+using DeepFreeze.Events;
 
-namespace DeepFreeze.Packages.ScreenSystem.Runtime
+namespace DeepFreeze.ScreenSystem
 {
     /// <summary>
     /// The base class for <see cref="Popup"/> events

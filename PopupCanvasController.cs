@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using DeepFreeze.Packages.Events.Runtime;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace DeepFreeze.Packages.ScreenSystem.Runtime
+namespace DeepFreeze.ScreenSystem
 {
     [RequireComponent(typeof(Canvas))]
+    [RequireComponent(typeof(CanvasScaler))]
     [RequireComponent(typeof(CanvasGroup))]
     public class PopupCanvasController : MonoBehaviour
     {
         public Canvas canvas;
+        public CanvasScaler canvasScaler;
         public CanvasGroup canvasGroup;
         public Transform popupContainer;
+
+        public Vector2 referenceResolutionPortrait = new Vector2(1080, 1920);
+        public Vector2 referenceResolutionLandscape = new Vector2(1920, 1080);
 
         public PopupPriority Priority { get; private set; }
         public List<Popup> Popups { get; private set; } = new List<Popup>();
@@ -24,6 +29,11 @@ namespace DeepFreeze.Packages.ScreenSystem.Runtime
                 canvas = GetComponent<Canvas>();
             }
 
+            if (canvasScaler == null)
+            {
+                canvasScaler = GetComponent<CanvasScaler>();
+            }
+            
             if (canvasGroup == null)
             {
                 canvasGroup = GetComponent<CanvasGroup>();
@@ -35,6 +45,11 @@ namespace DeepFreeze.Packages.ScreenSystem.Runtime
             }
             
             UpdatePopupSorting(false);
+        }
+
+        private void Start()
+        {
+            canvasScaler.referenceResolution = ScreenManager.IsPortrait ? referenceResolutionPortrait : referenceResolutionLandscape;
         }
 
         public void Initialize(PopupPriority priority)
