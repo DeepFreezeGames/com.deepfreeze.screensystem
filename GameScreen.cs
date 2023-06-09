@@ -20,14 +20,6 @@ namespace DeepFreeze.ScreenSystem
         public bool blockHighPriorityPopups;
         public bool blockMediumPriorityPopups;
 
-        public void OnEnable()
-        {
-            if (ScreenManager.Settings.logPopupShown)
-            {
-                Debug.Log($"Screen shown - {GetType().Name}");
-            }
-        }
-
         public virtual void Close()
         {
             switch (closeMethod)
