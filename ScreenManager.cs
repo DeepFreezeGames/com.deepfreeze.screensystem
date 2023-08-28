@@ -129,9 +129,9 @@ namespace DeepFreeze.ScreenSystem
 
         public static async Task<GameScreen> ShowScreen(Type screenType)
         {
-            if (!screenType.IsAssignableFrom(typeof(GameScreen)))
+            if (!typeof(GameScreen).IsAssignableFrom(screenType))
             {
-                Debug.LogError($"Trying to show screen by type but the type given is not an implementation of type: {nameof(GameScreen)}");
+                Debug.LogError($"Trying to show screen by type {screenType} but the type given is not an implementation of type: {nameof(GameScreen)}");
                 return null;
             }
 
@@ -161,7 +161,7 @@ namespace DeepFreeze.ScreenSystem
 
         public static bool IsScreenOpen(Type screenType, out GameScreen screen)
         {
-            if (!screenType.IsAssignableFrom(typeof(GameScreen)))
+            if (!typeof(GameScreen).IsAssignableFrom(screenType))
             {
                 Debug.LogError($"Trying to show screen by type but the type given is not an implementation of type: {nameof(GameScreen)}");
                 screen = null;
