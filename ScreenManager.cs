@@ -187,12 +187,15 @@ namespace DeepFreeze.ScreenSystem
             }
         }
 
-        public static void CloseAllScreens()
+        public static async Task CloseAllScreens()
         {
             foreach (var openScreen in OpenScreens)
             {
-                openScreen.Value.Close();
+                Object.Destroy(openScreen.Value.gameObject);
             }
+            
+            OpenScreens.Clear();
+            await InternalUpdateSorting();
         }
         #endregion
 
@@ -200,6 +203,28 @@ namespace DeepFreeze.ScreenSystem
         public static async Task<T> ShowPopup<T>() where T : Popup
         {
             var spawnedPopup = await _screenProvider.GetPopup<T>(GetPopupId(typeof(T)));
+            var spawnedPopupTransform = spawnedPopup.transform;
+            spawnedPopupTransform.SetParent(PopupControllers[spawnedPopup.priority].popupContainer);
+            spawnedPopupTransform.localPosition = Vector3.zero;
+            spawnedPopupTransform.localRotation = Quaternion.identity;
+            spawnedPopupTransform.localScale = Vector3.one;
+            var canvasController = PopupControllers[spawnedPopup.priority];
+            spawnedPopup.PopupCanvasController = canvasController;
+            canvasController.AddPopup(spawnedPopup);
+            EventManager.TriggerEvent(new PopupSpawnedEvent(spawnedPopup));
+            UpdateScreenSorting();
+            return spawnedPopup;
+        }
+
+        public static async Task<Popup> ShowPopup(Type popupType)
+        {
+            if (!typeof(Popup).IsAssignableFrom(popupType))
+            {
+                Debug.LogError($"Trying to show popup of type {popupType} but the type is not an implementation of Popup");
+                return null;
+            }
+            
+            var spawnedPopup = await _screenProvider.GetPopup<Popup>(GetPopupId(popupType));
             var spawnedPopupTransform = spawnedPopup.transform;
             spawnedPopupTransform.SetParent(PopupControllers[spawnedPopup.priority].popupContainer);
             spawnedPopupTransform.localPosition = Vector3.zero;
@@ -231,20 +256,49 @@ namespace DeepFreeze.ScreenSystem
             return false;
         }
 
+        public static bool IsPopupShown(Type popupType, out Popup popup)
+        {
+            if (!typeof(Popup).IsAssignableFrom(popupType))
+            {
+                Debug.LogError($"Trying to show popup of type {popupType} but the type is not an implementation of Popup");
+                popup = null;
+                return false;
+            }
+            
+            foreach (var popupController in PopupControllers)
+            {
+                foreach (var canvasPopup in popupController.Value.Popups)
+                {
+                    if (canvasPopup.GetType() == popupType)
+                    {
+                        popup = canvasPopup;
+                        return true;
+                    }
+                }
+            }
+
+            popup = null;
+            return false;
+        }
+
         private static void OnPopupClosed(PopupClosedEvent popupClosedEvent)
         {
             UpdateScreenSorting();
         }
 
-        public static void CloseAllPopups()
+        public static async Task CloseAllPopups()
         {
             foreach (var popupController in PopupControllers)
             {
                 foreach (var popup in popupController.Value.Popups)
                 {
-                    popup.Close();
+                    Object.Destroy(popup.gameObject);
                 }
+                
+                popupController.Value.Popups.Clear();
             }
+            
+            await InternalUpdateSorting();
         }
         #endregion
 
