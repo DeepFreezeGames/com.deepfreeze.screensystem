@@ -37,11 +37,25 @@ namespace DeepFreeze.ScreenSystem
                 : $"{Settings.constantScreenPrefix}{ScreenPrefix}{type.Name}{Settings.screenSuffix}";
         }
 
+        private static string GetScreenId(string screenName)
+        {
+            return string.IsNullOrEmpty(Settings.constantScreenPrefix)
+                ? $"{ScreenPrefix}{screenName}{Settings.screenSuffix}"
+                : $"{Settings.constantScreenPrefix}{ScreenPrefix}{screenName}{Settings.screenSuffix}";
+        }
+
         private static string GetPopupId(Type type)
         {
             return string.IsNullOrEmpty(Settings.constantPopupPrefix)
                 ? $"{PopupPrefix}{type.Name}{Settings.popupSuffix}"
                 : $"{Settings.constantPopupPrefix}{PopupPrefix}{type.Name}{Settings.popupSuffix}";
+        }
+
+        private static string GetPopupId(string popupName)
+        {
+            return string.IsNullOrEmpty(Settings.constantPopupPrefix)
+                ? $"{PopupPrefix}{popupName}{Settings.popupSuffix}"
+                : $"{Settings.constantPopupPrefix}{PopupPrefix}{popupName}{Settings.popupSuffix}";
         }
         #endregion
 
@@ -113,6 +127,26 @@ namespace DeepFreeze.ScreenSystem
             return screen;
         }
 
+        public static async Task<GameScreen> ShowScreen(Type screenType)
+        {
+            if (!screenType.IsAssignableFrom(typeof(GameScreen)))
+            {
+                Debug.LogError($"Trying to show screen by type but the type given is not an implementation of type: {nameof(GameScreen)}");
+                return null;
+            }
+
+            if (IsScreenOpen(screenType, out var screen))
+            {
+                return screen;
+            }
+
+            screen = await _screenProvider.GetScreen<GameScreen>(GetScreenId(screenType));
+            Object.DontDestroyOnLoad(screen.gameObject);
+            OpenScreens.Add(screenType, screen);
+
+            return screen;
+        }
+
         public static bool IsScreenOpen<T>(out T screen) where T : GameScreen
         {
             if (OpenScreens.ContainsKey(typeof(T)))
@@ -125,14 +159,40 @@ namespace DeepFreeze.ScreenSystem
             return false;
         }
 
-        public static void CloseScreen<T>() where T : GameScreen
+        public static bool IsScreenOpen(Type screenType, out GameScreen screen)
         {
-            if (!IsScreenOpen<T>(out var screen))
+            if (!screenType.IsAssignableFrom(typeof(GameScreen)))
             {
-                return;
+                Debug.LogError($"Trying to show screen by type but the type given is not an implementation of type: {nameof(GameScreen)}");
+                screen = null;
+                return false;
             }
             
-            screen.Close();
+            return OpenScreens.TryGetValue(screenType, out screen);
+        }
+
+        public static void CloseScreen<T>() where T : GameScreen
+        {
+            if (IsScreenOpen<T>(out var screen))
+            {
+                screen.Close();
+            }
+        }
+
+        public static void CloseScreen(Type screenType)
+        {
+            if (!IsScreenOpen(screenType, out var screen))
+            {
+                screen.Close();
+            }
+        }
+
+        public static void CloseAllScreens()
+        {
+            foreach (var openScreen in OpenScreens)
+            {
+                openScreen.Value.Close();
+            }
         }
         #endregion
 
@@ -174,6 +234,17 @@ namespace DeepFreeze.ScreenSystem
         private static void OnPopupClosed(PopupClosedEvent popupClosedEvent)
         {
             UpdateScreenSorting();
+        }
+
+        public static void CloseAllPopups()
+        {
+            foreach (var popupController in PopupControllers)
+            {
+                foreach (var popup in popupController.Value.Popups)
+                {
+                    popup.Close();
+                }
+            }
         }
         #endregion
 
