@@ -1,7 +1,6 @@
 ﻿using System;
 using DeepFreeze.Events;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace DeepFreeze.ScreenSystem
 {
