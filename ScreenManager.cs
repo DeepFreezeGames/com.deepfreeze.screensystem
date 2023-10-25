@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DeepFreeze.Events;
@@ -14,6 +15,7 @@ namespace DeepFreeze.ScreenSystem
     {
         public static bool Initialized { get; private set; }
         public static ScreenSettings Settings { get; private set; }
+        public static ScreenProfile Profile { get; private set; }
         
         public static bool IsPortrait { get; private set; }
 
@@ -27,39 +29,44 @@ namespace DeepFreeze.ScreenSystem
         private static Task _nextSortingUpdate;
 
         #region SCREEN/POPUP IDs
-        private static string ScreenPrefix => IsPortrait ? Settings.screenPrefixPort : Settings.screenPrefixLand;
-        private static string PopupPrefix => IsPortrait ? Settings.popupPrefixPort : Settings.popupPrefixLand;
+        private static string ScreenPrefix => IsPortrait ? Profile.screenPrefixPort : Profile.screenPrefixLand;
+        private static string PopupPrefix => IsPortrait ? Profile.popupPrefixPort : Profile.popupPrefixLand;
         
         private static string GetScreenId(Type type)
         {
-            return string.IsNullOrEmpty(Settings.constantScreenPrefix)
-                ? $"{ScreenPrefix}{type.Name}{Settings.screenSuffix}"
-                : $"{Settings.constantScreenPrefix}{ScreenPrefix}{type.Name}{Settings.screenSuffix}";
+            return string.IsNullOrEmpty(Profile.constantScreenPrefix)
+                ? $"{ScreenPrefix}{type.Name}{Profile.screenSuffix}"
+                : $"{Profile.constantScreenPrefix}{ScreenPrefix}{type.Name}{Profile.screenSuffix}";
         }
 
         private static string GetScreenId(string screenName)
         {
-            return string.IsNullOrEmpty(Settings.constantScreenPrefix)
-                ? $"{ScreenPrefix}{screenName}{Settings.screenSuffix}"
-                : $"{Settings.constantScreenPrefix}{ScreenPrefix}{screenName}{Settings.screenSuffix}";
+            return string.IsNullOrEmpty(Profile.constantScreenPrefix)
+                ? $"{ScreenPrefix}{screenName}{Profile.screenSuffix}"
+                : $"{Profile.constantScreenPrefix}{ScreenPrefix}{screenName}{Profile.screenSuffix}";
         }
 
         private static string GetPopupId(Type type)
         {
-            return string.IsNullOrEmpty(Settings.constantPopupPrefix)
-                ? $"{PopupPrefix}{type.Name}{Settings.popupSuffix}"
-                : $"{Settings.constantPopupPrefix}{PopupPrefix}{type.Name}{Settings.popupSuffix}";
+            return string.IsNullOrEmpty(Profile.constantPopupPrefix)
+                ? $"{PopupPrefix}{type.Name}{Profile.popupSuffix}"
+                : $"{Profile.constantPopupPrefix}{PopupPrefix}{type.Name}{Profile.popupSuffix}";
         }
 
         private static string GetPopupId(string popupName)
         {
-            return string.IsNullOrEmpty(Settings.constantPopupPrefix)
-                ? $"{PopupPrefix}{popupName}{Settings.popupSuffix}"
-                : $"{Settings.constantPopupPrefix}{PopupPrefix}{popupName}{Settings.popupSuffix}";
+            return string.IsNullOrEmpty(Profile.constantPopupPrefix)
+                ? $"{PopupPrefix}{popupName}{Profile.popupSuffix}"
+                : $"{Profile.constantPopupPrefix}{PopupPrefix}{popupName}{Profile.popupSuffix}";
         }
         #endregion
 
         public static async void Initialize(ScreenSettings settings, IScreenProvider screenProvider)
+        {
+            Initialize(settings, settings.profiles.FirstOrDefault(), screenProvider);
+        }
+
+        public static async void Initialize(ScreenSettings settings, ScreenProfile profile, IScreenProvider screenProvider)
         {
             if (Initialized)
             {
@@ -68,6 +75,12 @@ namespace DeepFreeze.ScreenSystem
             }
             
             Settings = settings;
+            Profile = profile ?? Settings.profiles.FirstOrDefault();
+            if (Profile == null)
+            {
+                Debug.LogError("There are no screen profiles in the given settings. Falling back to default profile but your UI may not work as expected");
+                Profile = new ScreenProfile();
+            }
             
             IsPortrait = Screen.height > Screen.width;
             
@@ -81,6 +94,62 @@ namespace DeepFreeze.ScreenSystem
             Initialized = true;
         }
 
+        public static void SetProfile(int profileIndex)
+        {
+            if (Settings == null)
+            {
+                Debug.LogError("Trying to set UI profile but the ScreenManager is not yet initialized");
+                return;
+            }
+
+            var profile = Settings.profiles.ElementAt(profileIndex);
+            if (profile == null)
+            {
+                Debug.LogError($"Trying to set UI profile to the profile at index {profileIndex.ToString()} but there is no profile at that index in the given settings");
+                if (Profile == null)
+                {
+                    Debug.Log("Falling back to default UI profile");
+                    profile = Settings.profiles.FirstOrDefault();
+                }
+            }
+            
+            SetProfile(profile);
+        }
+
+        public static void SetProfile(string profileId)
+        {
+            if (Settings == null)
+            {
+                Debug.LogError("Trying to set UI profile but the ScreenManager is not yet initialized");
+                return;
+            }
+
+            var profile = Settings.profiles.FirstOrDefault(p => p.id.Equals(profileId, StringComparison.InvariantCultureIgnoreCase));
+            if (profile == null)
+            {
+                Debug.LogError($"Trying to set the UI profile to {profileId} but no profile with that ID could be found in the current settings");
+                if (Profile == null)
+                {
+                    Debug.Log("Falling back to default UI profile");
+                    profile = Settings.profiles.FirstOrDefault();
+                }
+            }
+            
+            SetProfile(profile);
+        }
+
+        public static void SetProfile(ScreenProfile profile)
+        {
+            if (Profile == profile)
+            {
+                Debug.LogWarning("Trying to set profile to existing profile");
+                return;
+            }
+            
+            Debug.Log($"Setting UI profile to {profile.id}");
+            Profile = profile;
+        }
+
         private static void SpawnPopupContainers()
         {
             PopupControllers.Clear();
@@ -88,7 +157,7 @@ namespace DeepFreeze.ScreenSystem
             foreach (var priority in Enum.GetValues(typeof(PopupPriority)))
             {
                 var priorityValue = (PopupPriority)priority;
-                var newController = Object.Instantiate(Settings.popupCanvasControllerPrefab);
+                var newController = Object.Instantiate(Profile.popupCanvasControllerPrefab);
                 newController.Initialize(priorityValue);
                 PopupControllers.Add(priorityValue, newController);
                 Object.DontDestroyOnLoad(newController.gameObject);
