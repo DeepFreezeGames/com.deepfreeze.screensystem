@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace DeepFreeze.ScreenSystem
 {
@@ -20,6 +21,6 @@ namespace DeepFreeze.ScreenSystem
         public string popupSuffix = "";
 
         [Space]
-        public PopupCanvasController popupCanvasControllerPrefab;
+        public AssetReferenceGameObject popupCanvasControllerPrefab;
     }
 }

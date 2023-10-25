@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DeepFreeze.Events;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Object = UnityEngine.Object;
 
 namespace DeepFreeze.ScreenSystem
@@ -88,7 +89,7 @@ namespace DeepFreeze.ScreenSystem
             _screenProvider = screenProvider;
             await UniTask.WaitUntil(() => _screenProvider.Initialized);
 
-            SpawnPopupContainers();
+            await SpawnPopupContainers();
             BindEvents();
 
             Initialized = true;
@@ -150,14 +151,15 @@ namespace DeepFreeze.ScreenSystem
             Profile = profile;
         }
 
-        private static void SpawnPopupContainers()
+        private static async Task SpawnPopupContainers()
         {
             PopupControllers.Clear();
 
             foreach (var priority in Enum.GetValues(typeof(PopupPriority)))
             {
                 var priorityValue = (PopupPriority)priority;
-                var newController = Object.Instantiate(Profile.popupCanvasControllerPrefab);
+                var newControllerObj = await Addressables.InstantiateAsync(Profile.popupCanvasControllerPrefab);
+                var newController = newControllerObj.GetComponent<PopupCanvasController>();
                 newController.Initialize(priorityValue);
                 PopupControllers.Add(priorityValue, newController);
                 Object.DontDestroyOnLoad(newController.gameObject);
